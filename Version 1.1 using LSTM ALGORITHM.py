@@ -20,11 +20,12 @@ def fetch_game_data(num_rounds=500):
             tokens = re.split(r'[,\s]+', user_input)
             data = [float(x) for x in tokens if x]
             
-            if len(data) < 50:
-                print(f"Note: Input data ({len(data)} points) is too short for effective training. Prepending generated history...")
-                # Prepend simulated data so the model can train, but prediction (last 10) uses user data
-                previous_rounds = [random.uniform(1.1, 5.0) for _ in range(500 - len(data))]
-                data = previous_rounds + data
+            if len(data) < 11:
+                print(f"Error: Input data ({len(data)} points) is too short. Need at least 11 points (10 for pattern + 1 for target).")
+                print("Using simulated data instead...")
+                return [random.uniform(1.1, 5.0) for _ in range(num_rounds)]
+            
+            print(f"Using {len(data)} manual data points for training.")
             return data
         except ValueError:
             print("Invalid input detected. Switching to simulation mode...")
@@ -62,7 +63,7 @@ model = Sequential([
 ])
 
 model.compile(optimizer='adam', loss='mse')
-model.fit(X, y, epochs=20, batch_size=16, verbose=1)
+model.fit(X, y, epochs=20, batch_size=1, verbose=1)
 
 # Predict Next Multiplier
 last_sequence = scaled_data[-n_steps:].reshape(1, n_steps, 1)
