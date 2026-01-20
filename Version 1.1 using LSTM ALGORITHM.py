@@ -10,27 +10,27 @@ from tensorflow.keras.layers import LSTM, Dense
 # Simulated or Manual Data Collection
 def fetch_game_data(num_rounds=500):
     """Fetch historical Aviator game results (Simulation or Manual)."""
-    choice = input("Do you want to input data manually? (y/n): ").strip().lower()
-    
-    if choice == 'y':
-        print("Enter multipliers one by one. Type 'done' to finish.")
-        data = []
-        while True:
-            val = input(f"Round {len(data) + 1}: ")
-            if val.lower() == 'done':
-                if len(data) < 10:
-                    print("Error: Need at least 10 data points.")
-                    continue
-                break
-            try:
-                multiplier = float(val)
-                data.append(multiplier)
-            except ValueError:
-                print("Invalid input. Please enter a number.")
-        return data
-    else:
-        print("Using simulated data...")
-        return [random.uniform(1.1, 5.0) for _ in range(num_rounds)]  # Simulated multipliers
+    print("Enter past multipliers separated by space (e.g., 1.1 2.0 1.5).")
+    user_input = input("Or press Enter to use simulated data: ").strip()
+
+    if user_input:
+        try:
+            # Parse space, comma, or newline separated values
+            import re
+            tokens = re.split(r'[,\s]+', user_input)
+            data = [float(x) for x in tokens if x]
+            
+            if len(data) < 50:
+                print(f"Note: Input data ({len(data)} points) is too short for effective training. Prepending generated history...")
+                # Prepend simulated data so the model can train, but prediction (last 10) uses user data
+                previous_rounds = [random.uniform(1.1, 5.0) for _ in range(500 - len(data))]
+                data = previous_rounds + data
+            return data
+        except ValueError:
+            print("Invalid input detected. Switching to simulation mode...")
+            
+    print("Using simulated data...")
+    return [random.uniform(1.1, 5.0) for _ in range(num_rounds)]  # Simulated multipliers
 
 # Prepare Data for LSTM
 def prepare_data(sequence, n_steps=10):

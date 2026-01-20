@@ -45,6 +45,7 @@ Z:\.venv\Scripts\python.exe "Version 1.1 using LSTM ALGORITHM.py"
 - **Prediction**: Forecasts the next multiplier and suggests a safe cash-out point.
 
 ## ✍️ Manual Data Entry
-When you run the app, ask if you want to input data manually:
-- Type **`y`** to enter your own list of multipliers (type `done` to finish).
-- Type **`n`** (or just press Enter) to run with simulated data.
+When you run the app, you will be prompted:
+- **Enter data**: Type your multipliers separated by spaces (e.g., `1.1 2.0 1.5`) and press Enter.
+- **Simulation**: Just press **Enter** without typing anything to generate simulated data.
+- *Note: If you enter fewer than 50 points, simulated data will be added to the beginning to ensure the model has enough history to train.*
