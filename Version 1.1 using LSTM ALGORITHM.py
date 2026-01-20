@@ -7,10 +7,30 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 
-# Simulated Data Collection (Replace with real data source)
+# Simulated or Manual Data Collection
 def fetch_game_data(num_rounds=500):
-    """Fetch historical Aviator game results (Replace with real API)."""
-    return [random.uniform(1.1, 5.0) for _ in range(num_rounds)]  # Simulated multipliers
+    """Fetch historical Aviator game results (Simulation or Manual)."""
+    choice = input("Do you want to input data manually? (y/n): ").strip().lower()
+    
+    if choice == 'y':
+        print("Enter multipliers one by one. Type 'done' to finish.")
+        data = []
+        while True:
+            val = input(f"Round {len(data) + 1}: ")
+            if val.lower() == 'done':
+                if len(data) < 10:
+                    print("Error: Need at least 10 data points.")
+                    continue
+                break
+            try:
+                multiplier = float(val)
+                data.append(multiplier)
+            except ValueError:
+                print("Invalid input. Please enter a number.")
+        return data
+    else:
+        print("Using simulated data...")
+        return [random.uniform(1.1, 5.0) for _ in range(num_rounds)]  # Simulated multipliers
 
 # Prepare Data for LSTM
 def prepare_data(sequence, n_steps=10):
@@ -50,9 +70,9 @@ predicted_scaled = model.predict(last_sequence)
 predicted_multiplier = scaler.inverse_transform(predicted_scaled)[0][0]
 
 # Display Prediction
-print("\n📊 **Aviator LSTM Prediction** 🚀")
+print("\n**Aviator LSTM Prediction**")
 print(f"Next Multiplier: {round(predicted_multiplier, 2)}x")
-print("🎯 Recommendation: Cash out at", round(predicted_multiplier * 0.9, 2), "x for safety.")
+print("Recommendation: Cash out at", round(predicted_multiplier * 0.9, 2), "x for safety.")
 
 # Plot Training Loss
 plt.plot(model.history.history['loss'])
